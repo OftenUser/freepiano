@@ -6,21 +6,21 @@ static const char* string_names[FP_IDS_COUNT];
 static const char* string_table[FP_LANG_COUNT][FP_IDS_COUNT];
 
 static WORD system_language(int lang_id) {
-  switch (lang_id) {
-  case FP_LANG_ENGLISH:  return MAKELANGID(LANG_ENGLISH, SUBLANG_NEUTRAL);
-  case FP_LANG_SCHINESE: return MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED);
-  }
-  return MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);
+    switch (lang_id) {
+        case FP_LANG_ENGLISH: return MAKELANGID(LANG_ENGLISH, SUBLANG_NEUTRAL);
+        case FP_LANG_SCHINESE: return MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED);
+    }
+    return MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);
 }
 
 void lang_init() {
-  // initializie language table.
-  for (int lang = 0; lang < FP_LANG_COUNT; lang++) {
-    for (int id = 0; id < FP_IDS_COUNT; id++) {
-      string_table[lang][id] = "";
-      string_names[id] = "";
+    // Initialize language table.
+    for (int lang = 0; lang < FP_LANG_COUNT; lang++) {
+        for (int id = 0; id < FP_IDS_COUNT; id++) {
+            string_table[lang][id] = "";
+            string_names[id] = "";
+        }
     }
-  }
 
 #define STR_ENGLISH(id, str) string_table[FP_LANG_ENGLISH][id] = str; string_names[id] = #id;
 #define STR_SCHINESE(id, str) string_table[FP_LANG_SCHINESE][id] = str;
@@ -28,44 +28,43 @@ void lang_init() {
 #undef STR_ENGLISH
 #undef STR_SCHINESE
 
-  // auto choose language by default
-  lang_set_current(FP_LANG_AUTO);
+    // Auto choose language by default
+    lang_set_current(FP_LANG_AUTO);
 }
 
-// get default language
+// Get default language
 int lang_get_default() {
-  LANGID id = LANGIDFROMLCID(GetThreadLocale());
-  switch (PRIMARYLANGID(id)) {
-  case LANG_ENGLISH:
+    LANGID id = LANGIDFROMLCID(GetThreadLocale());
+    switch (PRIMARYLANGID(id)) {
+        case LANG_ENGLISH:
+            return FP_LANG_ENGLISH;
+
+        case LANG_CHINESE:
+            return FP_LANG_SCHINESE;
+    }
     return FP_LANG_ENGLISH;
-
-  case LANG_CHINESE:
-    return FP_LANG_SCHINESE;
-  }
-  return FP_LANG_ENGLISH;
 }
 
-// select current language
+// Select current language
 void lang_set_current(int languageid) {
-  if (languageid > FP_LANG_AUTO && languageid < FP_LANG_COUNT) {
-    lang_current = languageid;
-  }
-  else {
-    lang_current = lang_get_default();
-  }
+    if (languageid > FP_LANG_AUTO && languageid < FP_LANG_COUNT) {
+        lang_current = languageid;
+    } else {
+        lang_current = lang_get_default();
+    }
 }
 
-// get current language
+// Get current language
 int lang_get_current() {
-  return lang_current;
+    return lang_current;
 }
 
 // load str
 const char* lang_load_string(uint uid) {
-  if (uid < FP_IDS_COUNT) {
-    return string_table[lang_current][uid];
-  }
-  return "";
+    if (uid < FP_IDS_COUNT) {
+        return string_table[lang_current][uid];
+    }
+    return "";
 }
 
 // load lang string array
@@ -80,20 +79,20 @@ const char* * lang_load_string_array(uint uid) {
   uint arrlen = 1;
 
   for (uint i = 0; i < len; i++) {
-    if (temp[i] == ',') {
-      temp[i] = '\0';
-      if (arrlen < 256) {
-        arr[arrlen] = temp + i + 1;
-        arrlen++;
+      if (temp[i] == ',') {
+          temp[i] = '\0';
+          if (arrlen < 256) {
+              arr[arrlen] = temp + i + 1;
+              arrlen++;
+          }
       }
-    }
   }
   arr[arrlen] = 0;
   return (const char * *)arr;
 }
 
 
-// format lang str
+// Format lang str
 int lang_format_string(char *buff, size_t size, uint strid, ...) {
   const char *format = lang_load_string(strid);
   va_list args;
@@ -109,9 +108,9 @@ static struct lang_text_t {
   char *end;
   HGLOBAL hrc;
 }
-lang_text = { NULL, NULL, NULL };
+lang_text = {NULL, NULL, NULL};
 
-// open text
+// Open text
 int lang_text_open(uint textid) {
   lang_text_close();
 
@@ -122,7 +121,7 @@ int lang_text_open(uint textid) {
     hrsrc = FindResourceEx(module, "TEXT", MAKEINTRESOURCE(textid), MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL));
 
   if (hrsrc) {
-    // load resource
+    // Load resource
     HGLOBAL hrc = LoadResource(0, hrsrc);
 
     if (hrc) {
@@ -136,7 +135,7 @@ int lang_text_open(uint textid) {
   return 0;
 }
 
-// readline
+// Readline
 int lang_text_readline(char *line, size_t size) {
   char *line_end = line;
 
@@ -163,7 +162,7 @@ int lang_text_readline(char *line, size_t size) {
   return 0;
 }
 
-// close text
+// Close text
 void lang_text_close() {
   if (lang_text.hrc)
     FreeResource(lang_text.hrc);
@@ -174,10 +173,10 @@ void lang_text_close() {
 }
 
 
-// error message
+// Error message
 static char error_message[1024] = "Unknown error.";
 
-// set last error
+// Set last error
 void lang_set_last_error(const char *format, ...) {
   va_list args;
   va_start(args, format);
@@ -186,7 +185,7 @@ void lang_set_last_error(const char *format, ...) {
   fprintf(stderr, "last_error: %s\n", error_message);
 }
 
-// set last error
+// Set last error
 void lang_set_last_error(uint id, ...) {
   const char *format = lang_load_string(id);
   va_list args;
@@ -196,7 +195,7 @@ void lang_set_last_error(uint id, ...) {
   fprintf(stderr, "last_error: %s\n", error_message);
 }
 
-// get last error
+// Get last error
 const char * lang_get_last_error() {
   return error_message;
 }
@@ -218,8 +217,9 @@ static BOOL CALLBACK localize_hwnd(HWND hwnd, LPARAM lParam) {
   return TRUE;
 }
 
-// localize dialog
+// Localize dialog
 void lang_localize_dialog(HWND hwnd) {
   localize_hwnd(hwnd, NULL);
   EnumChildWindows(hwnd, &localize_hwnd, NULL);
+
 }
