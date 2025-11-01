@@ -14,74 +14,73 @@ int main()
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 #endif
 {
-  //SetThreadUILanguage(LANG_ENGLISH);
+  // SetThreadUILanguage(LANG_ENGLISH);
 
-  // initialize com
+  // Initialize COM
   if (FAILED(CoInitialize(NULL)))
     return 1;
 
-  // config init
+  // Config initialize
   if (config_init()) {
     MessageBox(NULL, lang_get_last_error(), APP_NAME, MB_OK);
     return 1;
   }
 
-  // init language
+  // Initialize language
   lang_init();
 
-  // init gui
+  // Initialize GUI
   if (gui_init()) {
     MessageBox(NULL, lang_get_last_error(), APP_NAME, MB_OK);
     return 1;
   }
 
-  // init display
+  // Initialize display
   if (display_init(gui_get_window())) {
     MessageBox(NULL, lang_get_last_error(), APP_NAME, MB_OK);
     return 1;
   }
 
-  // intialize keyboard
+  // Initalize keyboard
   if (keyboard_init()) {
     MessageBox(NULL, lang_get_last_error(), APP_NAME, MB_OK);
     return 1;
   }
 
-  // show gui
+  // Show GUI
   gui_show();
 
-  // load default config
+  // Load default config
   config_load("freepiano.cfg");
 
-  // check for update
+  // Check for update
 #ifndef _DEBUG
   update_check_async();
 #endif
 
-  // open lyt
-  //song_open_lyt("test3.lyt");
-  //song_open("D:\\src\\freepiano\\trunk\\data\\song\\kiss the rain.fpm");
-  //export_mp4("test.mp4");
+  // Open lyt
+  // song_open_lyt("test3.lyt");
+  // song_open("D:\\src\\freepiano\\trunk\\data\\song\\kiss the rain.fpm");
+  // export_mp4("test.mp4");
 
   MSG msg;
-  while (GetMessage(&msg, NULL, NULL, NULL))
-  {
+  while (GetMessage(&msg, NULL, NULL, NULL)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
 
   config_save("freepiano.cfg");
 
-  // shutdown keyboard
+  // Shutdown keyboard
   keyboard_shutdown();
 
-  // shutdown config
+  // Shutdown config
   config_shutdown();
 
-  // shutdown display
+  // Shutdown display
   display_shutdown();
 
-  // shutdown COM
+  // Shutdown COM
   CoUninitialize();
 
   return 0;
