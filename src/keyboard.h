@@ -1,31 +1,31 @@
 #pragma once
 #include "midi.h"
 
-// keymap enum callback
+// Keymap enum callback
 struct keymap_enum_callback {
   virtual void operator () (const char *value) = 0;
 };
 
-// initialize keyboard
+// Initialize keyboard
 int keyboard_init();
 
-// shutdown keyboard system
+// Shutdown keyboard system
 void keyboard_shutdown();
 
-// enable or disable keyboard
+// Enable or disable keyboard
 void keyboard_enable(bool enable);
 
-// enum keymap
+// Enum keymap
 void keyboard_enum_keymap(keymap_enum_callback &callback);
 
-// reset keyboard
+// Reset keyboard
 void keyboard_reset();
 
-// key event
+// Key event
 void keyboard_send_event(int code, int keydown);
 
-// keyboard event
+// Keyboard event
 void keyboard_update(double time_elapsed);
 
-// get keyboard status
+// Get keyboard status
 byte keyboard_get_status(byte code);
